@@ -1,4 +1,5 @@
 def detect_issues(log_lines):
+
     issues = {
         "map_operations": 0,
         "tcap_aborts": 0,
@@ -7,6 +8,8 @@ def detect_issues(log_lines):
     }
 
     for line in log_lines:
+
+        line = line.strip()
 
         if "sendRoutingInfoForSM" in line:
             issues["map_operations"] += 1
