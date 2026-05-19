@@ -4,11 +4,15 @@ from analyzer.report import generate_report
 
 
 def main():
-    log_path = "logs/sample_log.txt"
+    log_path = "analyzer/logs/sample_log.txt"
 
     print("\n========== Telecom Log Analyzer ==========\n")
 
     log_data = read_log_file(log_path)
+
+    if not log_data:
+        print("[ERROR] No log data found.")
+        return
 
     detected_issues = detect_issues(log_data)
 
