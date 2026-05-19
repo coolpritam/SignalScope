@@ -1,0 +1,4 @@
+invoke sendRoutingInfoForSM
+returnResultLast sendRoutingInfoForSM
+P_ABORT_RESOURCE_LIMITATION
+Transaction timeout detected
