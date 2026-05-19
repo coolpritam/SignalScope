@@ -1,6 +1,6 @@
 def generate_report(issues):
 
-    print("========== Analysis Report ==========\n")
+    print("\n========== Analysis Report ==========\n")
 
     print(f"MAP Operations Detected : {issues['map_operations']}")
     print(f"TCAP Aborts Detected    : {issues['tcap_aborts']}")
@@ -17,3 +17,5 @@ def generate_report(issues):
 
     if issues["resource_limitations"] > 0:
         print("- Check SMSC/IPSTG resource utilization")
+
+    print("\n========== Analysis Completed ==========\n")
