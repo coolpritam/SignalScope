@@ -2,6 +2,21 @@ import re
 from collections import Counter
 
 
+# Real telecom failure events
+ERROR_EVENTS = {
+    "absentSubscriberSM",
+    "facilityNotSupported",
+    "systemFailure",
+    "dataMissing",
+    "unexpectedDataValue"
+}
+
+# Informational telecom workflow events
+INFO_EVENTS = {
+    "alertServiceCentre"
+}
+
+
 def detect_issues(log_data):
 
     issues = {}
@@ -38,10 +53,12 @@ def detect_issues(log_data):
         re.IGNORECASE
     )
 
-    issues["resource_limitations"] = len(resource_limitations)
+    issues["resource_limitations"] = len(
+        resource_limitations
+    )
 
-    # Extract telecom error names
-    telecom_errors = re.findall(
+    # Extract telecom events dynamically
+    telecom_events = re.findall(
         r"localValue:\s*([A-Za-z0-9_-]+)",
         log_data
     )
@@ -52,14 +69,39 @@ def detect_issues(log_data):
         "mt-forwardSM"
     }
 
-    filtered_errors = [
-        error for error in telecom_errors
-        if error not in excluded_operations
+    filtered_events = [
+        event for event in telecom_events
+        if event not in excluded_operations
     ]
 
-    issues["telecom_errors"] = dict(
-        Counter(filtered_errors)
-    )
+    # Separate event categories
+    error_summary = {}
+    info_summary = {}
+    unknown_summary = {}
+
+    for event in filtered_events:
+
+        if event in ERROR_EVENTS:
+
+            error_summary[event] = (
+                error_summary.get(event, 0) + 1
+            )
+
+        elif event in INFO_EVENTS:
+
+            info_summary[event] = (
+                info_summary.get(event, 0) + 1
+            )
+
+        else:
+
+            unknown_summary[event] = (
+                unknown_summary.get(event, 0) + 1
+            )
+
+    issues["telecom_errors"] = error_summary
+    issues["telecom_info_events"] = info_summary
+    issues["unknown_events"] = unknown_summary
 
     # Extract transaction IDs
     transaction_ids = re.findall(

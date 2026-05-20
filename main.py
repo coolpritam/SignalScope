@@ -2,6 +2,7 @@ from analyzer.parser import read_log_file
 from analyzer.detector import detect_issues
 from analyzer.report import generate_report
 from analyzer.timeline import build_timeline
+from analyzer.metrics import calculate_metrics
 
 
 def main():
@@ -23,11 +24,21 @@ def main():
         print("[ERROR] No correlated log data found.")
         return
 
+    # Detect issues
     detected_issues = detect_issues(log_data)
 
-    generate_report(detected_issues)
+    # Calculate operational metrics
+    metrics = calculate_metrics(
+        detected_issues
+    )
 
-    # Build subscriber timeline
+    # Generate report
+    generate_report(
+        detected_issues,
+        metrics
+    )
+
+    # Generate subscriber timeline
     timeline = build_timeline(log_data)
 
     print("\n========== Subscriber Timeline ==========\n")

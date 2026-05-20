@@ -1,20 +1,20 @@
-def generate_report(issues):
-
-    total_events = (
-        issues["map_operations"]
-        + issues["tcap_aborts"]
-        + issues["timeouts"]
-        + issues["resource_limitations"]
-    )
+def generate_report(issues, metrics):
 
     print("\n========== SignalScope Analysis Report ==========\n")
 
-    print(f"Total Events             : {total_events}")
+    print(f"Total Events             : {metrics['total_events']}")
     print(f"Transaction Count        : {issues['transaction_count']}")
     print(f"MAP Operations Detected  : {issues['map_operations']}")
     print(f"TCAP Aborts Detected     : {issues['tcap_aborts']}")
     print(f"Timeout Events           : {issues['timeouts']}")
     print(f"Resource Limitations     : {issues['resource_limitations']}")
+
+    print("\n========== Operational Metrics ==========\n")
+
+    print(f"Successful Operations    : {metrics['successful_operations']}")
+    print(f"Success Ratio            : {metrics['success_ratio']}%")
+    print(f"Failure Ratio            : {metrics['failure_ratio']}%")
+    print(f"Protocol Health Score    : {metrics['health_score']}%")
 
     print("\n========== Telecom Error Summary ==========\n")
 
@@ -25,6 +25,26 @@ def generate_report(issues):
 
     else:
         print("No telecom errors detected.")
+
+    print("\n========== Informational Events ==========\n")
+
+    if issues["telecom_info_events"]:
+
+        for info_name, count in issues["telecom_info_events"].items():
+            print(f"{info_name} : {count}")
+
+    else:
+        print("No informational events detected.")
+
+    print("\n========== Unknown Telecom Events ==========\n")
+
+    if issues["unknown_events"]:
+
+        for event_name, count in issues["unknown_events"].items():
+            print(f"{event_name} : {count}")
+
+    else:
+        print("No unknown telecom events detected.")
 
     print("\n========== IMSI Summary ==========\n")
 
@@ -47,7 +67,7 @@ def generate_report(issues):
     if issues["resource_limitations"] > 0:
         print("- Check SMSC/IPSTG utilization and memory usage")
 
-    if total_events == 0:
-        print("- No major telecom issues detected")
+    if metrics["health_score"] < 80:
+        print("- Subscriber flow health degraded")
 
     print("\n========== Analysis Completed ==========\n")
